@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import type { Shipment, ShipmentStatus } from '../types'
 import { shipmentService } from '../services/shipmentService'
 
@@ -15,18 +15,12 @@ interface TrackingEvent {
 }
 
 export function ShipmentTracker({ shipment }: ShipmentTrackerProps) {
-  const [trackingInfo, setTrackingInfo] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     const loadTracking = async () => {
       try {
-        const info = await shipmentService.getShipmentTracking(shipment.id)
-        setTrackingInfo(info)
+        await shipmentService.getShipmentTracking(shipment.id)
       } catch (err) {
         console.error('Error al cargar rastreo:', err)
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -198,7 +192,6 @@ export function ShipmentTracker({ shipment }: ShipmentTrackerProps) {
   }
 
   const timeline = getTrackingTimeline()
-  const currentStatusIndex = timeline.findIndex(t => t.status === shipment.status)
 
   return (
     <div style={containerStyle}>

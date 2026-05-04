@@ -125,18 +125,6 @@ export function ShippingForm({ onSubmit, isLoading = false }: ShippingFormProps)
     transition: 'border-color 0.2s',
   }
 
-  const selectStyle: React.CSSProperties = {
-    ...inputStyle,
-    cursor: 'pointer',
-    backgroundColor: '#ffffff',
-  }
-
-  const textareaStyle: React.CSSProperties = {
-    ...inputStyle,
-    minHeight: '60px',
-    resize: 'vertical',
-  }
-
   const errorStyle: React.CSSProperties = {
     color: '#d32f2f',
     fontSize: '12px',

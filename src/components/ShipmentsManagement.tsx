@@ -119,11 +119,6 @@ export function ShipmentsManagement({ userId }: ShipmentsManagementProps) {
     marginBottom: '8px',
   }
 
-  const subtitleStyle: React.CSSProperties = {
-    fontSize: '14px',
-    color: '#666',
-  }
-
   const filterContainerStyle: React.CSSProperties = {
     display: 'flex',
     gap: '12px',

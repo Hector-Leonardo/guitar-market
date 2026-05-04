@@ -71,9 +71,6 @@ export function ShipmentCard({ shipment, onSelect }: ShipmentCardProps) {
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    ':hover': {
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-    },
   }
 
   const headerStyle: React.CSSProperties = {
