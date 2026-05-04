@@ -4,7 +4,8 @@
   "devCommand": "npm run dev",
   "env": {
     "FIREBASE_PROJECT_ID": "@firebase_project_id",
-    "MP_ACCESS_TOKEN": "@mp_access_token",
+    "MP_ACCESS_TOKEN": "APP_USR-5293198813101462-041503-aed5a78c67fd960cffd145f1397e93e1-3337978854",
+    "APP_URL": "https://guitarla-ts-main.vercel.app",
     "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
     "CLOUDINARY_API_KEY": "@cloudinary_api_key",
     "CLOUDINARY_API_SECRET": "@cloudinary_api_secret"
