@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago No Completado - Guitar Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-10px);
+        }
+        75% {
+          transform: translateX(10px);
+        }
+      }
+      .shake-animation {
+        animation: shake 0.5s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-8 text-center">
+        <div class="text-6xl mb-4 shake-animation">❌</div>
+
+        <h1 class="text-3xl font-bold text-red-600 mb-2">¡Pago No Completado!</h1>
+
+        <p class="text-gray-600 mb-6">
+          Lamentablemente, tu pago no pudo ser procesado. Por favor intenta de nuevo.
+        </p>
+
+        <div class="bg-red-50 rounded-lg p-4 mb-6 border-l-4 border-red-500">
+          <h3 class="font-semibold text-red-800 mb-2">Motivo del Error:</h3>
+          <p id="reason" class="text-red-700 text-sm">Razón desconocida</p>
+        </div>
+
+        <div class="bg-blue-50 rounded-lg p-4 mb-6 border-l-4 border-blue-500">
+          <h3 class="font-semibold text-blue-800 mb-3">Consejos para resolver:</h3>
+          <ul class="text-sm text-blue-700 space-y-1">
+            <li>✓ Verifica que tus datos sean correctos</li>
+            <li>✓ Confirma que tu tarjeta tiene fondos</li>
+            <li>✓ Intenta con otra tarjeta</li>
+            <li>✓ Contacta a tu banco si hay problemas</li>
+          </ul>
+        </div>
+
+        <div class="flex gap-3 flex-col">
+          <button
+            onclick="location.href='/'"
+            class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            🔄 Intentar Nuevamente
+          </button>
+          <a
+            href="/"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition text-center"
+          >
+            ← Volver al Carrito
+          </a>
+        </div>
+
+        <p class="text-sm text-gray-600 mt-4">
+          ¿Necesitas ayuda?<br />
+          Contacta a: <a href="mailto:support@guitarmarket.com" class="text-blue-600 font-semibold">support@guitarmarket.com</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Leer parámetros de la URL
+      const params = new URLSearchParams(window.location.search);
+      const reason = params.get('reason') || params.get('status') || 'El pago fue rechazado por tu banco o Mercado Pago';
+      const paymentId = params.get('payment_id') || 'N/A';
+
+      // Decodificar si está URL encoded
+      const decodedReason = decodeURIComponent(reason);
+      document.getElementById('reason').textContent = decodedReason;
+
+      // Guardar en sessionStorage
+      sessionStorage.setItem('guitarmarket_failed_payment', JSON.stringify({ reason: decodedReason, paymentId, timestamp: new Date().toISOString() }));
+    </script>
+  </body>
+</html>

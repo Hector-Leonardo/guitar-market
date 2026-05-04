@@ -1,0 +1,300 @@
+{
+  "title": "Ejemplos de Estructuras de Datos - Sistema de Envíos",
+  "version": "1.0",
+  "date": "2026-04-30",
+  
+  "shipment": {
+    "description": "Estructura completa de un envío",
+    "example": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "orderId": "order-1704067200000-abc123",
+      "userId": "user-firebase-uid-12345",
+      "shippingData": {
+        "fullName": "Juan Pérez García",
+        "phone": "5551234567",
+        "street": "Av. Paseo de la Reforma 505",
+        "apartment": "Piso 10, Depto 1005",
+        "city": "Mexico City",
+        "state": "CDMX",
+        "postalCode": "06500",
+        "shippingMethod": "express"
+      },
+      "status": "pending",
+      "trackingNumber": null,
+      "carrier": null,
+      "estimatedDelivery": null,
+      "actualDelivery": null,
+      "createdAt": "2026-04-30T15:30:45.123Z",
+      "updatedAt": "2026-04-30T15:30:45.123Z"
+    }
+  },
+
+  "shipment_with_tracking": {
+    "description": "Envío después de ser procesado",
+    "example": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "orderId": "order-1704067200000-abc123",
+      "userId": "user-firebase-uid-12345",
+      "shippingData": {
+        "fullName": "Juan Pérez García",
+        "phone": "5551234567",
+        "street": "Av. Paseo de la Reforma 505",
+        "apartment": "Piso 10, Depto 1005",
+        "city": "Mexico City",
+        "state": "CDMX",
+        "postalCode": "06500",
+        "shippingMethod": "express"
+      },
+      "status": "shipped",
+      "trackingNumber": "EST1234567890",
+      "carrier": "estafeta",
+      "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+      "actualDelivery": null,
+      "createdAt": "2026-04-30T15:30:45.123Z",
+      "updatedAt": "2026-05-01T10:15:30.456Z"
+    }
+  },
+
+  "shipment_delivered": {
+    "description": "Envío después de ser entregado",
+    "example": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "orderId": "order-1704067200000-abc123",
+      "userId": "user-firebase-uid-12345",
+      "shippingData": {
+        "fullName": "Juan Pérez García",
+        "phone": "5551234567",
+        "street": "Av. Paseo de la Reforma 505",
+        "apartment": "Piso 10, Depto 1005",
+        "city": "Mexico City",
+        "state": "CDMX",
+        "postalCode": "06500",
+        "shippingMethod": "express"
+      },
+      "status": "delivered",
+      "trackingNumber": "EST1234567890",
+      "carrier": "estafeta",
+      "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+      "actualDelivery": "2026-05-02T14:30:00.000Z",
+      "createdAt": "2026-04-30T15:30:45.123Z",
+      "updatedAt": "2026-05-02T14:30:00.000Z"
+    }
+  },
+
+  "shipment_list_item": {
+    "description": "Estructura para mostrar en lista",
+    "example": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "orderId": "order-1704067200000-abc123",
+      "status": "shipped",
+      "trackingNumber": "EST1234567890",
+      "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+      "createdAt": "2026-04-30T15:30:45.123Z",
+      "recipientName": "Juan Pérez García",
+      "city": "Mexico City"
+    }
+  },
+
+  "api_create_order_request": {
+    "description": "Request al crear una orden desde frontend",
+    "endpoint": "POST /api/create-order",
+    "example": {
+      "items": [
+        {
+          "id": 1,
+          "name": "Guitarra Clásica",
+          "description": "Guitarra de madera...",
+          "price": 1000,
+          "quantity": 1,
+          "image": "guitarra1.jpg",
+          "title": "Guitarra Clásica",
+          "unit_price": 1000,
+          "currency_id": "MXN"
+        }
+      ],
+      "userId": "user-firebase-uid-12345",
+      "shippingData": {
+        "fullName": "Juan Pérez García",
+        "phone": "5551234567",
+        "street": "Av. Paseo de la Reforma 505",
+        "apartment": "Piso 10, Depto 1005",
+        "city": "Mexico City",
+        "state": "CDMX",
+        "postalCode": "06500",
+        "shippingMethod": "express"
+      },
+      "total": 1150
+    }
+  },
+
+  "api_create_order_response": {
+    "description": "Response exitosa al crear orden",
+    "example": {
+      "success": true,
+      "init_point": "https://www.mercadopago.com.mx/checkout/v1/redirect?pref_id=123456789",
+      "preference_id": "123456789",
+      "order_id": "order-1704067200000-abc123"
+    }
+  },
+
+  "api_get_user_shipments_request": {
+    "description": "Request para obtener envíos del usuario",
+    "endpoint": "GET /api/shipments/user/{userId}?status=shipped&limit=10",
+    "query_params": {
+      "status": "opcional - filtrar por estado: pending, processing, shipped, in_transit, delivered, cancelled",
+      "limit": "opcional - máximo de resultados (default: 50)"
+    }
+  },
+
+  "api_get_user_shipments_response": {
+    "description": "Response con lista de envíos del usuario",
+    "example": {
+      "success": true,
+      "shipments": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "orderId": "order-1704067200000-abc123",
+          "status": "shipped",
+          "trackingNumber": "EST1234567890",
+          "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+          "createdAt": "2026-04-30T15:30:45.123Z",
+          "recipientName": "Juan Pérez García",
+          "city": "Mexico City"
+        },
+        {
+          "id": "660f9511-f39c-52e5-b827-557766551111",
+          "orderId": "order-1704153600000-def456",
+          "status": "pending",
+          "trackingNumber": null,
+          "estimatedDelivery": null,
+          "createdAt": "2026-05-01T10:00:00.000Z",
+          "recipientName": "María García López",
+          "city": "Monterrey"
+        }
+      ],
+      "count": 2
+    }
+  },
+
+  "api_get_shipment_details_request": {
+    "description": "Request para obtener detalles de un envío",
+    "endpoint": "GET /api/shipments/{shipmentId}"
+  },
+
+  "api_get_shipment_details_response": {
+    "description": "Response con detalles completos del envío",
+    "example": {
+      "success": true,
+      "shipment": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "orderId": "order-1704067200000-abc123",
+        "userId": "user-firebase-uid-12345",
+        "shippingData": {
+          "fullName": "Juan Pérez García",
+          "phone": "5551234567",
+          "street": "Av. Paseo de la Reforma 505",
+          "apartment": "Piso 10, Depto 1005",
+          "city": "Mexico City",
+          "state": "CDMX",
+          "postalCode": "06500",
+          "shippingMethod": "express"
+        },
+        "status": "shipped",
+        "trackingNumber": "EST1234567890",
+        "carrier": "estafeta",
+        "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+        "actualDelivery": null,
+        "createdAt": "2026-04-30T15:30:45.123Z",
+        "updatedAt": "2026-05-01T10:15:30.456Z"
+      }
+    }
+  },
+
+  "api_get_shipment_tracking_request": {
+    "description": "Request para obtener info de rastreo",
+    "endpoint": "GET /api/shipments/{shipmentId}/tracking"
+  },
+
+  "api_get_shipment_tracking_response": {
+    "description": "Response con información de rastreo",
+    "example": {
+      "success": true,
+      "trackingNumber": "EST1234567890",
+      "status": "shipped",
+      "carrier": "estafeta",
+      "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+      "lastUpdate": "2026-05-01T10:15:30.456Z"
+    }
+  },
+
+  "api_update_shipment_request": {
+    "description": "Request para actualizar estado del envío (admin)",
+    "endpoint": "PUT /api/shipments/{shipmentId}",
+    "example": {
+      "status": "in_transit",
+      "carrier": "estafeta",
+      "trackingNumber": "EST1234567890",
+      "estimatedDelivery": "2026-05-02T00:00:00.000Z"
+    }
+  },
+
+  "api_update_shipment_response": {
+    "description": "Response al actualizar envío",
+    "example": {
+      "success": true,
+      "shipment": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "orderId": "order-1704067200000-abc123",
+        "userId": "user-firebase-uid-12345",
+        "shippingData": {
+          "fullName": "Juan Pérez García",
+          "phone": "5551234567",
+          "street": "Av. Paseo de la Reforma 505",
+          "apartment": "Piso 10, Depto 1005",
+          "city": "Mexico City",
+          "state": "CDMX",
+          "postalCode": "06500",
+          "shippingMethod": "express"
+        },
+        "status": "in_transit",
+        "trackingNumber": "EST1234567890",
+        "carrier": "estafeta",
+        "estimatedDelivery": "2026-05-02T00:00:00.000Z",
+        "actualDelivery": null,
+        "createdAt": "2026-04-30T15:30:45.123Z",
+        "updatedAt": "2026-05-01T11:00:00.000Z"
+      }
+    }
+  },
+
+  "shipment_status_enum": {
+    "description": "Estados posibles del envío",
+    "values": {
+      "pending": "Orden confirmada, pendiente procesamiento",
+      "processing": "En preparación para envío",
+      "shipped": "Entregado al transportista",
+      "in_transit": "En camino al destino",
+      "delivered": "Entregado al cliente",
+      "cancelled": "Envío cancelado"
+    }
+  },
+
+  "carrier_enum": {
+    "description": "Transportistas disponibles",
+    "values": {
+      "estafeta": "Estafeta (México)",
+      "dhl": "DHL Express",
+      "fedex": "FedEx",
+      "manual": "Asignación manual"
+    }
+  },
+
+  "shipping_method_enum": {
+    "description": "Métodos de envío disponibles",
+    "values": {
+      "standard": "Envío estándar - $50 MXN (5-7 días)",
+      "express": "Envío express - $150 MXN (2-3 días)",
+      "overnight": "Envío nocturno - $300 MXN (1 día)"
+    }
+  }
+}
