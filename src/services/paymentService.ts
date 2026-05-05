@@ -24,6 +24,7 @@ export const paymentService = {
    * @returns URL de redirección a Mercado Pago o error
    */
   async createOrder(items: CartItem[], shippingData?: ShippingData, _total?: number, _userId?: string): Promise<CreateOrderResponse> {
+    console.log('🆔 V3-2024-05-05-MERCADO-PAGO-DIRECT')
     try {
       // Validar que haya items
       if (!items || items.length === 0) {
