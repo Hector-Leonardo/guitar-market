@@ -86,13 +86,23 @@ export const paymentService = {
       console.log('📤 Enviando a Mercado Pago:', preferenceData)
 
       // Realizar petición a Mercado Pago con el token del cliente
-      const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+      const mpUrl = 'https://api.mercadopago.com/checkout/preferences'
+      console.log('🌐 URL:', mpUrl)
+      console.log('🔑 Token:', 'Bearer APP_USR-...' + 'aed5a78c67fd960cffd145f1397e93e1-3337978854'.slice(-20))
+      
+      const response = await fetch(mpUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer APP_USR-5293198813101462-041503-aed5a78c67fd960cffd145f1397e93e1-3337978854',
         },
         body: JSON.stringify(preferenceData),
+      })
+
+      console.log('📊 Response Status:', response.status, response.statusText)
+      console.log('📋 Response Headers:', {
+        'content-type': response.headers.get('content-type'),
+        'x-request-id': response.headers.get('x-request-id'),
       })
 
       if (!response.ok) {
