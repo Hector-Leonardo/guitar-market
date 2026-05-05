@@ -2,11 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "env": {
     "FIREBASE_PROJECT_ID": "@firebase_project_id",
     "MP_ACCESS_TOKEN": "APP_USR-5293198813101462-041503-aed5a78c67fd960cffd145f1397e93e1-3337978854",

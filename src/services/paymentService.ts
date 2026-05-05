@@ -2,7 +2,7 @@ import type { CartItem, ShippingData } from '../types'
 
 /**
  * Servicio para realizar pagos con Mercado Pago
- * Se comunica con el backend en /api/create-order
+ * NOTA: Las preferencias se crean directamente desde el cliente
  */
 
 interface CreateOrderResponse {
@@ -42,82 +42,107 @@ export const paymentService = {
         currency_id: 'MXN',
       }))
 
-      console.log('🔄 Conectando con el servidor de pagos...')
-      console.log('📊 Items a enviar:', orderItems)
-      console.log('📍 Datos de envío:', shippingData)
-      console.log('💰 Total con envío:', total)
+      console.log('🔄 Creando preferencia de Mercado Pago...')
+      console.log('📊 Items:', orderItems)
+      console.log('📍 Envío:', shippingData)
 
-      // Realizar petición al backend
-      const response = await fetch('/api/create-order', {
+      const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      const appUrl = window.location.origin
+
+      // Construir datos para Mercado Pago
+      const preferenceData: any = {
+        items: orderItems,
+        external_reference: orderId,
+        back_urls: {
+          success: `${appUrl}/payment-success`,
+          failure: `${appUrl}/payment-failure`,
+          pending: `${appUrl}/payment-pending`,
+        },
+        auto_return: 'approved',
+        notification_url: undefined, // Opcional - configurar webhook después
+      }
+
+      // Agregar datos de envío si existen
+      if (shippingData) {
+        const nameParts = (shippingData.fullName || '').split(' ')
+        preferenceData.payer = {
+          name: nameParts[0] || 'Cliente',
+          surname: nameParts.slice(1).join(' ') || 'Guitar Market',
+          email: shippingData.email || 'cliente@guitarmarket.mx',
+          phone: {
+            number: shippingData.phone.replace(/\D/g, ''),
+          },
+          address: {
+            street_name: shippingData.street,
+            street_number: 1,
+            zip_code: shippingData.postalCode,
+            city_name: shippingData.city,
+            state_name: shippingData.state,
+          },
+        }
+      }
+
+      console.log('📤 Enviando a Mercado Pago:', preferenceData)
+
+      // Realizar petición a Mercado Pago con el token del cliente
+      const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer APP_USR-5293198813101462-041503-aed5a78c67fd960cffd145f1397e93e1-3337978854',
         },
-        body: JSON.stringify({
-          items: orderItems,
-          userId: userId,
-          shippingData: shippingData,
-          total: total,
-        }),
+        body: JSON.stringify(preferenceData),
       })
 
-      // Verificar que la respuesta sea OK
       if (!response.ok) {
-        console.error(`❌ Error HTTP ${response.status}: ${response.statusText}`)
+        const errorData = await response.json().catch(() => null)
+        console.error('❌ Error Mercado Pago:', response.status, errorData)
         
-        // Intentar leer el error del servidor
-        let errorData
-        try {
-          errorData = await response.json()
-        } catch {
-          errorData = null
+        // Si el token es inválido, mostrar mensaje específico
+        if (response.status === 401) {
+          return {
+            success: false,
+            error: 'Credenciales de Mercado Pago inválidas',
+            details: 'Verifica que el token de acceso esté configurado correctamente',
+          }
         }
 
-        throw new Error(
-          errorData?.error ||
-          `El servidor respondió con error: ${response.status} ${response.statusText}`
-        )
-      }
-
-      console.log('✅ Respuesta del servidor recibida')
-
-      const data: CreateOrderResponse = await response.json()
-
-      if (data.success && data.init_point) {
-        console.log('🎉 Orden creada exitosamente en Mercado Pago')
-        return {
-          success: true,
-          init_point: data.init_point,
-          preference_id: data.preference_id,
-          order_id: data.order_id,
-        }
-      } else {
-        console.error('❌ Error del servidor:', data.error)
         return {
           success: false,
-          error: data.error || 'Error al crear la orden',
-          details: data.details,
+          error: errorData?.message || 'Error al crear preferencia en Mercado Pago',
+          details: `HTTP ${response.status}`,
+        }
+      }
+
+      const mpResponse = await response.json()
+      
+      if (mpResponse.id && mpResponse.init_point) {
+        console.log('🎉 Preferencia creada:', mpResponse.id)
+        return {
+          success: true,
+          init_point: mpResponse.init_point,
+          preference_id: mpResponse.id,
+          order_id: orderId,
+        }
+      } else {
+        return {
+          success: false,
+          error: 'No se recibió init_point de Mercado Pago',
+          details: JSON.stringify(mpResponse),
         }
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       console.error('❌ Error en paymentService:', errorMessage)
       
-      // Detectar si es un problema de conexión
-      let userMessage = 'Error de conexión'
-      if (errorMessage.includes('Failed to fetch')) {
-        userMessage = 'No se pudo conectar con el servidor. Verifica que esté ejecutándose'
-      } else if (errorMessage.includes('HTTP 500')) {
-        userMessage = 'Error en el servidor. Por favor, intenta de nuevo'
-      } else if (errorMessage.includes('HTTP 400')) {
-        userMessage = 'Datos inválidos en la solicitud'
-      } else if (errorMessage.includes('socket hang up')) {
-        userMessage = 'Conexión perdida con el servidor'
-      }
-
       return {
         success: false,
-        error: userMessage,
+        error: 'Error al procesar el pago',
+        details: errorMessage,
+      }
+    }
+  },
+}
         details: errorMessage,
       }
     }
