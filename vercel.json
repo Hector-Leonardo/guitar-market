@@ -2,23 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "functions": {
-    "vercel/api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/vercel/api/$1.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
-    }
-  ],
   "env": {
     "FIREBASE_PROJECT_ID": "@firebase_project_id",
     "MP_ACCESS_TOKEN": "APP_USR-5293198813101462-041503-aed5a78c67fd960cffd145f1397e93e1-3337978854",
