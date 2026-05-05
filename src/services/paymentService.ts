@@ -19,11 +19,11 @@ export const paymentService = {
    * Crea una orden de pago y obtiene el link de redirección a Mercado Pago
    * @param items - Items del carrito
    * @param shippingData - Datos de envío del cliente
-   * @param total - Total con envío incluido
-   * @param userId - ID del usuario (opcional)
+   * @param total - Total con envío incluido (no usado - incluido para compatibilidad)
+   * @param userId - ID del usuario (no usado - incluido para compatibilidad)
    * @returns URL de redirección a Mercado Pago o error
    */
-  async createOrder(items: CartItem[], shippingData?: ShippingData, total?: number, userId?: string): Promise<CreateOrderResponse> {
+  async createOrder(items: CartItem[], shippingData?: ShippingData, _total?: number, _userId?: string): Promise<CreateOrderResponse> {
     try {
       // Validar que haya items
       if (!items || items.length === 0) {
@@ -68,7 +68,7 @@ export const paymentService = {
         preferenceData.payer = {
           name: nameParts[0] || 'Cliente',
           surname: nameParts.slice(1).join(' ') || 'Guitar Market',
-          email: shippingData.email || 'cliente@guitarmarket.mx',
+          email: 'cliente@guitarmarket.mx',
           phone: {
             number: shippingData.phone.replace(/\D/g, ''),
           },
@@ -139,31 +139,6 @@ export const paymentService = {
         success: false,
         error: 'Error al procesar el pago',
         details: errorMessage,
-      }
-    }
-  },
-}
-        details: errorMessage,
-      }
-    }
-  },
-
-  /**
-   * Obtiene el estado de un pago
-   * @param paymentId - ID del pago de Mercado Pago
-   */
-  async getPaymentStatus(paymentId: string) {
-    try {
-      const response = await fetch(`/api/payment-status?payment_id=${paymentId}`)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      return await response.json()
-    } catch (error) {
-      console.error('Error al verificar estado del pago:', error)
-      return {
-        success: false,
-        error: 'Error de conexión',
       }
     }
   },
