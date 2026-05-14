@@ -109,7 +109,12 @@ export default function Header({cart, removeFromCart, decreaseQuantity, increase
                                 }}
                                 title="Ser Vendedor"
                             >
-                                🏪
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FFC107' }}>
+                                    <path d="M4 19h16"></path>
+                                    <path d="M6 19V10"></path>
+                                    <path d="M12 19V5"></path>
+                                    <path d="M18 19v-7"></path>
+                                </svg>
                             </button>
                         )}
                         
