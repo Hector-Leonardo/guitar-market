@@ -11,3 +11,8 @@
     "CLOUDINARY_API_SECRET": "@cloudinary_api_secret"
   }
 }
+  {
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "devCommand": "npm run dev"
+  }
