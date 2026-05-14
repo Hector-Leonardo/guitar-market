@@ -23,7 +23,10 @@ export const paymentService = {
    * @param userId - ID del usuario (no usado - incluido para compatibilidad)
    * @returns URL de redirección a Mercado Pago o error
    */
-  async createOrder(items: CartItem[], shippingData?: ShippingData, _total?: number, _userId?: string): Promise<CreateOrderResponse> {
+  async createOrder(items: CartItem[], shippingData?: ShippingData, total?: number, userId?: string): Promise<CreateOrderResponse> {
+    void total
+    void userId
+
     console.log('🆔 V3-2024-05-05-MERCADO-PAGO-DIRECT')
     try {
       // Validar que haya items

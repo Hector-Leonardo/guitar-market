@@ -148,7 +148,7 @@ match /databases/{database}/documents {
     console.log('   2. Procesar pagos en la tienda');
     console.log('   3. Las órdenes se guardarán en Firestore automáticamente\n');
 
-    console.log('📚 Documentación: FIREBASE_SETUP.md\n');
+    console.log('📚 Revisa la documentación general del proyecto si necesitas más detalle\n');
 
     rl.close();
     process.exit(0);

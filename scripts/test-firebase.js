@@ -94,6 +94,6 @@ match /databases/{database}/documents {
     console.error('\nDetalles:', error);
   }
 
-  console.error('\n📚 Documentación: Revisa FIREBASE_SETUP.md\n');
+  console.error('\n📚 Revisa la documentación general del proyecto si necesitas más detalle\n');
   process.exit(1);
 }
