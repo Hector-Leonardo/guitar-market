@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import styles from './BecomeSeller.module.css'
 
@@ -14,6 +14,18 @@ export function BecomeSeller({ onSuccess }: BecomeSellerProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    // Aplicar fondo al body cuando el componente se monta
+    document.body.style.background = 'linear-gradient(135deg, #f5f1e8 0%, #fef6e8 100%)'
+    document.body.style.backgroundAttachment = 'fixed'
+    
+    // Limpiar cuando el componente se desmonta
+    return () => {
+      document.body.style.background = ''
+      document.body.style.backgroundAttachment = ''
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
