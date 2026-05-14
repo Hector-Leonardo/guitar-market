@@ -23,56 +23,46 @@
   <body class="bg-gray-50">
     <div class="min-h-screen flex items-center justify-center p-4">
       <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-8 text-center">
-        <div class="text-6xl mb-4 bounce-animation">✅</div>
-
-        <h1 class="text-3xl font-bold text-green-600 mb-2">¡Pago Exitoso!</h1>
+        <h1 class="text-3xl font-bold text-amber-600 mb-2">¡Pago Exitoso!</h1>
 
         <p class="text-gray-600 mb-6">
-          Tu pedido ha sido procesado correctamente. Pronto recibirás un email de confirmación.
+          Tu pedido ha sido procesado correctamente.
         </p>
 
-        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left border-l-4 border-green-500">
+        <div class="bg-amber-50 rounded-lg p-4 mb-6 text-left border-l-4 border-amber-500">
           <h3 class="font-semibold text-gray-800 mb-3">Resumen del Pedido:</h3>
           <div class="space-y-2 text-sm text-gray-700">
             <div class="flex justify-between">
               <span>Número de Pedido:</span>
-              <span id="orderId" class="font-semibold text-green-600">Cargando...</span>
+              <span id="orderId" class="font-semibold text-amber-700">Cargando...</span>
             </div>
             <div class="flex justify-between">
               <span>ID de Pago:</span>
-              <span id="paymentId" class="font-semibold text-green-600">
+              <span id="paymentId" class="font-semibold text-amber-700">
                 <span id="paymentValue">-</span>
               </span>
             </div>
             <div class="flex justify-between">
               <span>Estado:</span>
-              <span class="font-semibold text-green-600">✅ Aprobado</span>
+              <span class="font-semibold text-amber-700">✅ Aprobado</span>
             </div>
           </div>
         </div>
 
-        <div id="infoBox" class="bg-blue-50 rounded-lg p-4 mb-6 border-l-4 border-blue-500 text-left">
-          <h3 class="font-semibold text-blue-800 mb-2">📧 Próximos Pasos:</h3>
-          <ul class="text-sm text-blue-700 space-y-1">
-            <li>✓ Revisa tu email para los detalles</li>
-            <li>✓ Tu pedido estará siendo preparado</li>
-            <li>✓ Recibirás notificaciones de envío</li>
-          </ul>
+        <div class="bg-green-50 rounded-lg p-4 mb-6 border-l-4 border-green-500 text-left">
+          <h3 class="font-semibold text-green-800 mb-2">Redireccionamiento</h3>
+          <p class="text-sm text-green-700">
+            Serás enviado a la página principal del programa en un momento.
+          </p>
         </div>
 
         <div class="flex gap-3 flex-col sm:flex-row">
           <a
             href="/"
-            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+            class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition"
           >
-            Volver a la Tienda
+            Ir a la Página Principal
           </a>
-          <button
-            onclick="window.print()"
-            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition"
-          >
-            Imprimir
-          </button>
         </div>
 
         <p class="text-xs text-gray-500 mt-4">
@@ -93,8 +83,13 @@
       // Guardar en sessionStorage para referencia
       sessionStorage.setItem('guitarmarket_last_payment', JSON.stringify({ orderId, paymentId, timestamp: new Date().toISOString() }));
 
-      // Auto-volver a la tienda después de 10 segundos (opcional)
-      // setTimeout(() => { window.location.href = '/'; }, 10000);
+      const goHome = () => {
+        window.location.replace('/');
+      }
+
+      // Redirección inmediata con respaldo breve para evitar quedarse atrapado en la página de éxito
+      window.setTimeout(goHome, 1500)
+      window.setTimeout(goHome, 4000)
     </script>
   </body>
 </html>

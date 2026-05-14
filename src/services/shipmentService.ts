@@ -1,6 +1,31 @@
-import type { Shipment, ShipmentListItem, ShipmentUpdate } from '../types'
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore'
+import { db } from '../config/firebase-client'
+import type { Shipment, ShipmentItem, ShipmentListItem, ShipmentUpdate, ShippingData } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+export interface CreateShipmentInput {
+  orderId: string
+  userId: string
+  paymentId?: string
+  shippingData: ShippingData
+  items: ShipmentItem[]
+  totalAmount: number
+  currency: string
+  status?: Shipment['status']
+  trackingNumber?: string
+  carrier?: Shipment['carrier']
+  estimatedDelivery?: string
+}
+
+const shipmentsCollection = collection(db, 'shipments')
 
 export const shipmentService = {
   /**
@@ -8,19 +33,26 @@ export const shipmentService = {
    */
   async getUserShipments(userId: string): Promise<ShipmentListItem[]> {
     try {
-      const response = await fetch(`${API_URL}/shipments/user/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const q = query(collection(db, 'shipments'), where('userId', '==', userId))
+      const querySnapshot = await getDocs(q)
+
+      const shipments = querySnapshot.docs.map((snapshot) => {
+        const data = snapshot.data() as Shipment
+        return {
+          id: snapshot.id,
+          orderId: data.orderId,
+          status: data.status,
+          trackingNumber: data.trackingNumber,
+          estimatedDelivery: data.estimatedDelivery,
+          createdAt: data.createdAt,
+          recipientName: data.shippingData?.fullName || 'Cliente',
+          city: data.shippingData?.city || 'Ciudad no disponible',
+          itemCount: data.items?.length || 0,
+          totalAmount: data.totalAmount,
+        }
       })
 
-      if (!response.ok) {
-        throw new Error('Error al obtener envíos')
-      }
-
-      const data = await response.json()
-      return data.shipments || []
+      return shipments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     } catch (error) {
       console.error('Error en getUserShipments:', error)
       throw error
@@ -32,21 +64,76 @@ export const shipmentService = {
    */
   async getShipmentDetails(shipmentId: string): Promise<Shipment> {
     try {
-      const response = await fetch(`${API_URL}/shipments/${shipmentId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      const docRef = doc(db, 'shipments', shipmentId)
+      const docSnap = await getDoc(docRef)
 
-      if (!response.ok) {
-        throw new Error('Error al obtener detalles del envío')
+      if (!docSnap.exists()) {
+        throw new Error('Envío no encontrado')
       }
 
-      const data = await response.json()
-      return data.shipment
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      } as Shipment
     } catch (error) {
       console.error('Error en getShipmentDetails:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Obtener un envío por su orden
+   */
+  async getShipmentByOrderId(orderId: string): Promise<Shipment | null> {
+    try {
+      const q = query(collection(db, 'shipments'), where('orderId', '==', orderId))
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        return null
+      }
+
+      const snapshot = querySnapshot.docs[0]
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      } as Shipment
+    } catch (error) {
+      console.error('Error en getShipmentByOrderId:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Actualizar campos de un envío por orderId
+   */
+  async updateShipmentByOrderId(orderId: string, updates: Partial<Shipment>): Promise<Shipment | null> {
+    try {
+      const q = query(collection(db, 'shipments'), where('orderId', '==', orderId))
+      const querySnapshot = await getDocs(q)
+
+      if (querySnapshot.empty) {
+        return null
+      }
+
+      const snapshot = querySnapshot.docs[0]
+      const docRef = doc(db, 'shipments', snapshot.id)
+      await updateDoc(docRef, {
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      })
+
+      const updated = await getDoc(docRef)
+      if (!updated.exists()) {
+        return null
+      }
+
+      return {
+        id: updated.id,
+        ...updated.data(),
+      } as Shipment
+    } catch (error) {
+      console.error('Error en updateShipmentByOrderId:', error)
       throw error
     }
   },
@@ -62,18 +149,14 @@ export const shipmentService = {
     lastUpdate: string
   }> {
     try {
-      const response = await fetch(`${API_URL}/shipments/${shipmentId}/tracking`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error('Error al obtener información de rastreo')
+      const shipment = await this.getShipmentDetails(shipmentId)
+      return {
+        trackingNumber: shipment.trackingNumber || '',
+        status: shipment.status,
+        carrier: shipment.carrier || 'manual',
+        estimatedDelivery: shipment.estimatedDelivery || '',
+        lastUpdate: shipment.updatedAt,
       }
-
-      return await response.json()
     } catch (error) {
       console.error('Error en getShipmentTracking:', error)
       throw error
@@ -81,26 +164,40 @@ export const shipmentService = {
   },
 
   /**
-   * Crear un nuevo envío (generalmente llamado automáticamente al crear una orden)
+   * Crear un nuevo envío
    */
-  async createShipment(orderId: string, userId: string): Promise<Shipment> {
+  async createShipment(input: CreateShipmentInput): Promise<Shipment> {
     try {
-      const response = await fetch(`${API_URL}/shipments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          orderId,
-          userId,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Error al crear envío')
+      const payload: Record<string, unknown> = {
+        orderId: input.orderId,
+        userId: input.userId,
+        shippingData: input.shippingData,
+        items: input.items,
+        totalAmount: input.totalAmount,
+        currency: input.currency,
+        status: input.status || 'pending',
+        carrier: input.carrier || 'manual',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
 
-      return await response.json()
+      if (input.paymentId) {
+        payload.paymentId = input.paymentId
+      }
+
+      if (input.trackingNumber) {
+        payload.trackingNumber = input.trackingNumber
+      }
+
+      if (input.estimatedDelivery) {
+        payload.estimatedDelivery = input.estimatedDelivery
+      }
+
+      const docRef = await addDoc(shipmentsCollection, payload)
+      return {
+        id: docRef.id,
+        ...(payload as Omit<Shipment, 'id'>),
+      }
     } catch (error) {
       console.error('Error en createShipment:', error)
       throw error
@@ -112,19 +209,21 @@ export const shipmentService = {
    */
   async updateShipment(shipmentId: string, updates: ShipmentUpdate): Promise<Shipment> {
     try {
-      const response = await fetch(`${API_URL}/shipments/${shipmentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
+      const docRef = doc(db, 'shipments', shipmentId)
+      await updateDoc(docRef, {
+        ...updates,
+        updatedAt: new Date().toISOString(),
       })
 
-      if (!response.ok) {
-        throw new Error('Error al actualizar envío')
+      const updated = await getDoc(docRef)
+      if (!updated.exists()) {
+        throw new Error('Envío no encontrado')
       }
 
-      return await response.json()
+      return {
+        id: updated.id,
+        ...updated.data(),
+      } as Shipment
     } catch (error) {
       console.error('Error en updateShipment:', error)
       throw error
@@ -136,18 +235,9 @@ export const shipmentService = {
    */
   async cancelShipment(shipmentId: string): Promise<Shipment> {
     try {
-      const response = await fetch(`${API_URL}/shipments/${shipmentId}/cancel`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      return await this.updateShipment(shipmentId, {
+        status: 'cancelled',
       })
-
-      if (!response.ok) {
-        throw new Error('Error al cancelar envío')
-      }
-
-      return await response.json()
     } catch (error) {
       console.error('Error en cancelShipment:', error)
       throw error

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { db } from '../data/db'
 import type { Guitar, CartItem } from '../types'
+import { productService } from '../services/productService'
 
 export const useCart = () => {
 
@@ -9,7 +10,7 @@ export const useCart = () => {
         return localStorageCart ? JSON.parse(localStorageCart) : []
     }
 
-    const [data] = useState(db)
+    const [data, setData] = useState<Guitar[]>(db)
     const [cart, setCart] = useState(initialCart)
 
     const MIN_ITEMS = 1
@@ -18,6 +19,29 @@ export const useCart = () => {
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cart))
     }, [cart])
+
+    useEffect(() => {
+        const loadMarketplaceProducts = async () => {
+            try {
+                const products = await productService.getAllProducts(undefined, 200)
+
+                const publishedProducts: Guitar[] = products.map((product) => ({
+                    id: `seller-${product.id}`,
+                    name: product.title,
+                    image: product.images?.[0] || 'guitarra_01',
+                    description: product.description,
+                    price: product.price,
+                }))
+
+                setData([...db, ...publishedProducts])
+            } catch (error) {
+                console.error('No se pudieron cargar los productos publicados por vendedores:', error)
+                setData(db)
+            }
+        }
+
+        loadMarketplaceProducts()
+    }, [])
 
     function addToCart(item : Guitar) {
         const itemExists = cart.findIndex(guitar => guitar.id === item.id)

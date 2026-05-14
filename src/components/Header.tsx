@@ -1,6 +1,7 @@
 import type { CartItem } from '../types'
 import { UserMenu } from './UserMenu'
 import { useState, useRef } from 'react'
+import { useAuth } from '../hooks/useAuth'
     
 type HeaderProps = {
     cart: CartItem[],
@@ -11,12 +12,23 @@ type HeaderProps = {
     isEmpty: boolean,
     cartTotal: number,
     onCheckout?: () => void,
-    onShowShipments?: () => void
+    onShowShipments?: () => void,
+    onShowSellerDashboard?: () => void,
+    onShowBecomeSeller?: () => void
 }
 
-export default function Header({cart, removeFromCart, decreaseQuantity, increaseQuantity, clearCart, isEmpty, cartTotal, onCheckout, onShowShipments}: HeaderProps) {
+export default function Header({cart, removeFromCart, decreaseQuantity, increaseQuantity, clearCart, isEmpty, cartTotal, onCheckout, onShowShipments, onShowSellerDashboard, onShowBecomeSeller}: HeaderProps) {
     const [showCart, setShowCart] = useState(false)
     const timeoutRef = useRef<number | null>(null)
+    const { isSeller } = useAuth()
+
+    const getCartImageSrc = (image: string) => {
+        if (image.startsWith('http://') || image.startsWith('https://') || image.startsWith('data:')) {
+            return image
+        }
+
+        return `/img/${image}.jpg`
+    }
 
     const handleCartMouseEnter = () => {
         if (timeoutRef.current) {
@@ -42,6 +54,64 @@ export default function Header({cart, removeFromCart, decreaseQuantity, increase
                     </div>
                     <nav className="col-md-6 a mt-5 d-flex align-items-start justify-content-end" style={{ gap: '15px' }}>
                         <UserMenu />
+                        
+                        {/* Botones de Vendedor */}
+                        {isSeller ? (
+                            <>
+                                <button
+                                    onClick={onShowSellerDashboard}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                        transition: 'transform 0.3s ease',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '18px'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'scale(1.1)'
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = 'scale(1)'
+                                    }}
+                                    title="Mi Tienda"
+                                >
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FFC107' }}>
+                                        <path d="M4 19h16"></path>
+                                        <path d="M6 19V10"></path>
+                                        <path d="M12 19V5"></path>
+                                        <path d="M18 19v-7"></path>
+                                    </svg>
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                onClick={onShowBecomeSeller}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '4px',
+                                    transition: 'transform 0.3s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '18px'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1.1)'
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1)'
+                                }}
+                                title="Ser Vendedor"
+                            >
+                                🏪
+                            </button>
+                        )}
                         
                         {/* Botón de Envíos */}
                         {onShowShipments && (
@@ -103,7 +173,7 @@ export default function Header({cart, removeFromCart, decreaseQuantity, increase
                                                     <td>
                                                         <img 
                                                             className="img-fluid" 
-                                                            src={`/img/${guitar.image}.jpg`}
+                                                            src={getCartImageSrc(guitar.image)}
                                                             alt="imagen guitarra" 
                                                         />
                                                     </td>

@@ -84,7 +84,69 @@ export function ShipmentsManagement({ userId }: ShipmentsManagementProps) {
     }
 
     try {
-      await shipmentService.cancelShipment(shipmentId)
+      const shipment = await shipmentService.getShipmentDetails(shipmentId)
+      console.log('📦 Shipment details:', { id: shipment.id, orderId: shipment.orderId, paymentId: shipment.paymentId, status: shipment.status, totalAmount: shipment.totalAmount })
+
+      if (!shipment.paymentId) {
+        throw new Error('Este envío todavía no tiene un pago aprobado asociado')
+      }
+
+      console.log('🔄 Iniciando reembolso con paymentId:', shipment.paymentId)
+      const refundResponse = await fetch('/api/refund-shipment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentId: shipment.paymentId,
+          orderId: shipment.orderId,
+          amount: shipment.totalAmount,
+          reason: 'Cancelación de envío solicitada por el cliente',
+        }),
+      })
+
+      console.log('📡 Response status:', refundResponse.status)
+      const refundResult = await refundResponse.json().catch(() => null)
+      console.log('💰 Refund result:', refundResult)
+
+      if (!refundResponse.ok || !refundResult?.success) {
+        console.warn('⚠️ Reembolso NO procesado, guardando estado y permitiendo cancelación local', { status: refundResponse.status, refundResult })
+
+        await shipmentService.updateShipment(shipmentId, {
+          status: 'cancelled',
+          refundData: {
+            refundId: refundResult?.refundId ?? null,
+            amount: refundResult?.amount ?? shipment.totalAmount,
+            status: 'rejected',
+            reason: refundResult?.error || `Reembolso no procesado (HTTP ${refundResponse.status})`,
+            requestedAt: new Date().toISOString(),
+            processedAt: refundResult?.processedAt ?? null,
+          },
+        })
+
+        // Refrescar lista y salir (aceptamos cancelación aunque el reembolso fallara)
+        if (userId) {
+          const data = await shipmentService.getUserShipments(userId)
+          setShipments(data)
+        }
+        setSelectedShipment(null)
+        setViewMode('list')
+        return
+      }
+
+      console.log('✅ Reembolso exitoso, actualizando estado...')
+      await shipmentService.updateShipment(shipmentId, {
+        status: 'cancelled',
+        refundData: {
+          refundId: refundResult.refundId ?? null,
+          amount: refundResult.amount ?? shipment.totalAmount,
+          status: refundResult.status === 'approved' ? 'approved' : 'pending',
+          reason: refundResult.reason || 'Cancelación de envío',
+          requestedAt: new Date().toISOString(),
+          processedAt: new Date().toISOString(),
+        },
+      })
+
       // Refrescar lista
       if (userId) {
         const data = await shipmentService.getUserShipments(userId)
@@ -93,8 +155,9 @@ export function ShipmentsManagement({ userId }: ShipmentsManagementProps) {
       setSelectedShipment(null)
       setViewMode('list')
     } catch (err) {
-      console.error('Error al cancelar:', err)
-      setError('No se pudo cancelar el envío')
+      const errorMsg = err instanceof Error ? err.message : String(err)
+      console.error('❌ Error al cancelar:', errorMsg, err)
+      setError(`No se pudo cancelar el envío: ${errorMsg}`)
     }
   }
 

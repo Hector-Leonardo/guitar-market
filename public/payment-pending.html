@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago Pendiente - Guitar Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-8 text-center">
+        <div class="text-6xl mb-4">⏳</div>
+
+        <h1 class="text-3xl font-bold text-amber-600 mb-2">Pago Pendiente</h1>
+
+        <p class="text-gray-600 mb-6">
+          Recibimos tu operación, pero el pago aún está en revisión. Te notificaremos cuando se confirme.
+        </p>
+
+        <div class="bg-amber-50 rounded-lg p-4 mb-6 border-l-4 border-amber-500 text-left">
+          <h3 class="font-semibold text-amber-800 mb-2">Estado actual:</h3>
+          <p class="text-sm text-amber-700">Mercado Pago está validando la transacción.</p>
+        </div>
+
+        <div class="bg-amber-50 rounded-lg p-4 mb-6 border-l-4 border-amber-500 text-left">
+          <h3 class="font-semibold text-amber-800 mb-2">Redireccionamiento</h3>
+          <p class="text-sm text-amber-700">
+            Puedes volver a la página principal del programa mientras Mercado Pago confirma el pago.
+          </p>
+        </div>
+
+        <div class="flex gap-3 flex-col sm:flex-row">
+          <a
+            href="/"
+            class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            Ir a la Página Principal
+          </a>
+          <button
+            onclick="window.location.reload()"
+            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 rounded-lg transition"
+          >
+            Actualizar estado
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    setTimeout(() => {
+      window.location.replace('/');
+    }, 10000);
+  </script>
+</html>

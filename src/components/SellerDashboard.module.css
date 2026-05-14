@@ -1,0 +1,282 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 255, 255, 0) 220px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.22);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header h1 {
+  font-size: 28px;
+  margin: 0 0 5px 0;
+  color: #1a1a1a;
+}
+
+.header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.newProductBtn {
+  background: #1a1a1a;
+  color: #FFC107;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 1px solid #FFC107;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+
+.newProductBtn:hover {
+  transform: translateY(-2px);
+  background: #FFC107;
+  color: #1a1a1a;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: bold;
+  color: #FFC107;
+  margin-bottom: 8px;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.alertBox {
+  background: #fff8e1;
+  border: 1px solid #ffc107;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.alertBox h3 {
+  margin: 0 0 10px 0;
+  color: #1a1a1a;
+}
+
+.alertBox ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #5d4b00;
+}
+
+.alertBox li {
+  margin-bottom: 5px;
+}
+
+.section h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #1a1a1a;
+}
+
+.emptyState {
+  text-align: center;
+  color: #666;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+}
+
+.emptyState a {
+  color: #FFC107;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.productCard {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.productCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.productImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.productImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #999;
+}
+
+.hiddenBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.productInfo {
+  padding: 15px;
+}
+
+.productInfo h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.category {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #999;
+  text-transform: capitalize;
+}
+
+.priceStock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFC107;
+}
+
+.stock {
+  font-size: 12px;
+  color: #666;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  background: #1a1a1a;
+  color: #FFC107;
+  transition: background 0.2s;
+}
+
+.actionBtn:hover {
+  background: #FFC107;
+  color: #1a1a1a;
+}
+
+.deleteBtn {
+  background: #3a1f1f;
+  color: #ffb3b3;
+}
+
+.deleteBtn:hover {
+  background: #c62828;
+  color: #fff;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+.error {
+  background: #fee;
+  color: #c33;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.notSeller {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  margin: 20px;
+}
+
+.notSeller h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.notSeller a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}

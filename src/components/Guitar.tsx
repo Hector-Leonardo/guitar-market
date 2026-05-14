@@ -8,12 +8,13 @@ type GuitarProps = {
 export default function Guitar({guitar, addToCart}: GuitarProps) {
 
     const { name, image, description, price } = guitar
+    const imageSrc = image.startsWith('http') ? image : `/img/${image}.jpg`
 
 
     return (
         <div className="col-md-6 col-lg-4 my-4 row align-items-center">
             <div className="col-4">
-                <img className="img-fluid" src={`/img/${image}.jpg`} alt={`Imagen de ${name}`} />
+                <img className="img-fluid" src={imageSrc} alt={`Imagen de ${name}`} />
             </div>
             <div className="col-8">
                 <h3 className="text-black fs-4 fw-bold text-uppercase">{name}</h3>

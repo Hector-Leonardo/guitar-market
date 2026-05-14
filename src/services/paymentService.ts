@@ -50,17 +50,21 @@ export const paymentService = {
       const orderId = `order-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
       const appUrl = window.location.origin
 
-      // Construir datos para Mercado Pago
       const preferenceData: any = {
         items: orderItems,
         external_reference: orderId,
         back_urls: {
-          success: `${appUrl}/payment-success`,
-          failure: `${appUrl}/payment-failure`,
-          pending: `${appUrl}/payment-pending`,
+          success: `${appUrl}/?payment=approved&order_id=${encodeURIComponent(orderId)}`,
+          failure: `${appUrl}/payment-failure.html`,
+          pending: `${appUrl}/payment-pending.html`,
         },
-        auto_return: 'approved',
         notification_url: undefined, // Opcional - configurar webhook después
+      }
+
+      const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+
+      if (!isLocalhost) {
+        preferenceData.auto_return = 'approved'
       }
 
       // Agregar datos de envío si existen

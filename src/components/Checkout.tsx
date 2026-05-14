@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { CartItem, ShippingData } from '../types'
 import { paymentService } from '../services/paymentService'
+import { shipmentService } from '../services/shipmentService'
 import { useAuth } from '../hooks/useAuth'
 import { ShippingForm } from './ShippingForm'
 
@@ -69,7 +70,7 @@ export function Checkout({ cart, cartTotal, onSuccess, onError }: CheckoutProps)
       if (result.success && result.init_point) {
         console.log('✅ === PAGO PROCESADO EXITOSAMENTE ===')
         console.log('📋 Preference ID:', result.preference_id)
-        console.log('🔗 Redirigiendo a Mercado Pago...')
+        console.log('🔗 Guardando envío en Firestore...')
 
         // Guardar datos completos de la orden en sessionStorage
         sessionStorage.setItem(
@@ -85,6 +86,27 @@ export function Checkout({ cart, cartTotal, onSuccess, onError }: CheckoutProps)
             timestamp: new Date().toISOString(),
           })
         )
+
+        try {
+          await shipmentService.createShipment({
+            orderId: result.order_id || result.preference_id || `order-${Date.now()}`,
+            userId: currentUser?.uid || 'guest',
+            paymentId: result.preference_id,
+            shippingData,
+            items: cart.map((item) => ({
+              productId: String(item.id),
+              title: item.name,
+              quantity: item.quantity,
+              unitPrice: item.price,
+              image: item.image,
+            })),
+            totalAmount: totalWithShipping,
+            currency: 'MXN',
+            status: 'pending',
+          })
+        } catch (shipmentError) {
+          console.error('❌ No se pudo guardar el envío en Firestore:', shipmentError)
+        }
 
         // Ejecutar callback
         onSuccess?.()
@@ -111,7 +133,13 @@ export function Checkout({ cart, cartTotal, onSuccess, onError }: CheckoutProps)
     <div style={containerStyle}>
       <div style={contentStyle}>
         {/* Paso 1: Información de Envío */}
-        {step === 'shipping' && <ShippingForm onSubmit={handleShippingSubmit} isLoading={loading} />}
+        {step === 'shipping' && (
+          <ShippingForm
+            onSubmit={handleShippingSubmit}
+            isLoading={loading}
+            userId={currentUser?.uid}
+          />
+        )}
 
         {/* Paso 2: Revisión de Pedido */}
         {step === 'review' && cart.length > 0 && shippingData && (
