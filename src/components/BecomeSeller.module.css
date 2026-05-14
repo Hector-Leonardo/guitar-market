@@ -122,23 +122,23 @@
 
 .success {
   text-align: center;
-  color: #c17817;
-  padding: 28px;
-  background: linear-gradient(135deg, #fef6e8 0%, #fce8d0 100%);
+  padding: 40px 20px;
+  background: white;
   border-radius: 8px;
-  border-left: 4px solid #e99401;
+  color: #1a1a1a;
+  border: 1px solid rgba(233, 148, 1, 0.2);
 }
 
-.success h2 {
+.success h1 {
   margin: 0 0 12px 0;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 700;
   color: #e99401;
 }
 
 .success p {
   margin: 8px 0;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
 }
 

@@ -83,7 +83,7 @@ export function BecomeSeller({ onSuccess }: BecomeSellerProps) {
 
         {success ? (
           <div className={styles.success}>
-            <h2>¡Éxito!</h2>
+            <h1>¡Éxito!</h1>
             <p>Registro exitoso</p>
             <p>Redirigiendo a tu dashboard...</p>
           </div>
