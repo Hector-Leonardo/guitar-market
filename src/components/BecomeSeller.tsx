@@ -20,6 +20,12 @@ export function BecomeSeller({ onSuccess }: BecomeSellerProps) {
     document.body.style.background = 'linear-gradient(135deg, #f5f1e8 0%, #fef6e8 100%)'
     document.body.style.backgroundAttachment = 'fixed'
     
+    // Verificar si viene con parámetro success=true en la URL (para preview)
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('preview') === 'success') {
+      setSuccess(true)
+    }
+    
     // Limpiar cuando el componente se desmonta
     return () => {
       document.body.style.background = ''
