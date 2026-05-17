@@ -108,16 +108,6 @@ Pasos rápidos:
 - `api/` — endpoints serverless (ej. `refund-shipment.js`).
 - `public/` — assets y páginas estáticas.
 
-## Contribuir
-
-1. Abre un issue describiendo el cambio.
-2. Crea una rama, haz un commit y abre un PR.
-3. Sigue linter (`npm run lint`) y formatea antes de enviar.
-
-## Licencia y contacto
-
-Indica aquí la licencia del proyecto (ej. MIT) y tu contacto (GitHub o email).
-
 ---
 
 Si quieres, puedo:
