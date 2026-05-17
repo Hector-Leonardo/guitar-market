@@ -108,9 +108,3 @@ Pasos rápidos:
 - `api/` — endpoints serverless (ej. `refund-shipment.js`).
 - `public/` — assets y páginas estáticas.
 
----
-
-Si quieres, puedo:
-
-- Añadir un checklist de despliegue paso a paso para Vercel.
-- Generar un `.env.example` basado en las variables detectadas.
