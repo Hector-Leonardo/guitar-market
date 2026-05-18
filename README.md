@@ -9,7 +9,7 @@ Proyecto demo de marketplace para venta de guitarras. Incluye: cliente (Vite + R
 ## Tecnologías
 
 - Vite, React, TypeScript
-- Firebase (Firestore) — cliente y admin (opcional)
+- Firebase (Firestore)
 - Mercado Pago (pagos)
 - Cloudinary (almacenamiento de imágenes)
 
@@ -17,7 +17,6 @@ Proyecto demo de marketplace para venta de guitarras. Incluye: cliente (Vite + R
 
 - Node.js (16+ recomendado)
 - npm o yarn
-- (Opcional) `gcloud` para autenticación por defecto de Google
 
 ## Instalación
 
@@ -45,9 +44,9 @@ Nota: el frontend proxyea las peticiones a `/api` hacia `http://localhost:3000` 
 
 ## Variables de entorno (.env)
 
-Este proyecto usa varias variables. Nunca subas valores reales a repos públicos.
+Este proyecto usa varias variables.
 
-Ejemplo mínimo en `.env` (no incluir secretos en el repo):
+Ejemplo mínimo en `.env`:
 
 ```
 MP_ACCESS_TOKEN=TU_MP_ACCESS_TOKEN
@@ -81,15 +80,6 @@ VITE_FIREBASE_APP_ID=...
 - Cloudinary: preset `guitarmarket_products` (usar en Cloudinary dashboard). Las subidas desde frontend usan un preset sin firmar; la eliminación requiere backend.
 - Firebase: Firestore se usa para guardar órdenes (`src/services/orderService.ts`). Ejecuta `npm run setup-firebase` para creación rápida de `.env` con `FIREBASE_PROJECT_ID`.
 
-## Endpoints / Backend
-
-- `api/refund-shipment.js` — endpoint para reembolsos que usa `MP_ACCESS_TOKEN`.
-- Otros endpoints server-side pueden ubicarse en `server/` o `api/` (funciones serverless). Ver `vite.config.ts` proxy para desarrollo.
-
-## Páginas públicas de pago
-
-En `public/` hay páginas estáticas usadas por Mercado Pago como `payment-success.html`, `payment-failure.html` y `payment-pending.html`.
-
 ## Despliegue (Vercel)
 
 `vercel.json` está configurado con `buildCommand: npm run build` y `outputDirectory: dist`.
@@ -107,4 +97,3 @@ Pasos rápidos:
 - `scripts/` — utilidades (setup Firebase, tests).
 - `api/` — endpoints serverless (ej. `refund-shipment.js`).
 - `public/` — assets y páginas estáticas.
-
